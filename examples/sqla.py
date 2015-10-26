@@ -51,18 +51,18 @@ class MainHandler(SqlalchemyRESTMixin):
         session.add(SuperModel(string_column=u'one'))
         session.commit()
         logger.info(u'MainHandler: POST')
-        return u"asdasdasd"
+        return u"Created!"
 
 
 class AnotherHandler(SqlalchemyRESTMixin):
 
     def handle_get(self, session):
         logger.info(u'AnotherHandler: GET')
-        return u"something"
+        return u"Something"
 
     def handle_post(self, session):
         logger.info(u'AnotherHandler: POST')
-        return u"else"
+        return u"Else"
 
 
 class CustomApp(tornado.web.Application):
