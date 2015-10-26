@@ -8,7 +8,6 @@ and You're good to go :)
 
 
 .. code-block:: python
-    :emphasize-lines: 2
 
     engine = engine_from_config(settings, prefix=u'sqlalchemy.', echo=True)
     sqla.initialize_sessionmaker(engine=engine)
