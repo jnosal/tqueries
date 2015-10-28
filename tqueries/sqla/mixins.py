@@ -18,9 +18,10 @@ class SqlalchemyRESTMixin(tornado.web.RequestHandler):
             response = handler(session)
         except Exception as e:
             raise
+        else:
+            return response
         finally:
             session.close()
-        return response
 
     @tornado.gen.coroutine
     def get(self):
