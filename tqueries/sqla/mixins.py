@@ -19,7 +19,6 @@ class SqlalchemyRESTMixin(tornado.web.RequestHandler):
         except Exception as e:
             raise
         finally:
-            print "LD"
             session.close()
         return response
 
