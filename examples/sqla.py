@@ -10,6 +10,7 @@ from sqlalchemy.ext.declarative.api import declarative_base
 from sqlalchemy import engine_from_config
 
 import tornado.httpserver
+import tornado.gen
 import tornado.ioloop
 import tornado.log
 import tornado.options
@@ -39,6 +40,13 @@ class SuperModel(Base):
 # that comes from tornado.web.Application
 # User has to override handle_<method>
 class MainHandler(SqlalchemyRESTMixin):
+
+    @tornado.gen.coroutine
+    def get(self):
+        # custom get
+        response = yield self._handle(self.handle_get)
+        self.set_status(202)
+        self.write(response)
 
     def handle_get(self, session):
         logger.info(u'MainHandler: GET')
