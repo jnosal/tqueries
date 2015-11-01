@@ -1,14 +1,11 @@
 import time
-import signal
-
-from concurrent.futures import ThreadPoolExecutor
 
 import sqlalchemy as sa
 from sqlalchemy import engine_from_config
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative.api import declarative_base
 from sqlalchemy import engine_from_config
-
+from concurrent.futures import ThreadPoolExecutor
 import tornado.httpserver
 import tornado.gen
 import tornado.ioloop
@@ -18,6 +15,8 @@ import tornado.web
 
 from tqueries import sqla
 from tqueries.sqla.mixins import SqlalchemyRESTMixin
+from tqueries.sqla.utils import register_shutdown_handler
+
 
 logger = tornado.log.app_log
 tornado.options.define(u"port", default=8888, type=int)
@@ -83,19 +82,6 @@ class CustomApp(tornado.web.Application):
         self._executor = ThreadPoolExecutor(max_workers=20)
 
 
-def shutdown(server_instance):
-    ioloop_instance = tornado.ioloop.IOLoop.instance()
-    logger.info(u'Stopping App Gracefully.')
-
-    server_instance.stop()
-
-    def finalize():
-        ioloop_instance.stop()
-        logger.info(u'App stopped.')
-
-    ioloop_instance.add_timeout(time.time() + 1.5, finalize)
-
-
 def start_server():
     options = tornado.options.options
     options.parse_command_line()
@@ -113,10 +99,7 @@ def start_server():
         options.host, options.port
     ))
 
-    shutdown_handler = lambda sig, frame: shutdown(http_server)
-    signal.signal(signal.SIGINT, shutdown_handler)
-    signal.signal(signal.SIGTERM, shutdown_handler)
-
+    register_shutdown_handler(http_server, engine)
     http_server.listen(options.port, options.host)
     tornado.ioloop.IOLoop.instance().start()
 
