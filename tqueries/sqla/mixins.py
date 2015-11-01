@@ -2,7 +2,7 @@ import tornado.concurrent
 import tornado.gen
 import tornado.web
 
-from tqueries.sqla import get_session
+from tqueries.sqla.utils import session_manager
 
 
 class SqlalchemyRESTMixin(tornado.web.RequestHandler):
@@ -13,15 +13,9 @@ class SqlalchemyRESTMixin(tornado.web.RequestHandler):
 
     @tornado.concurrent.run_on_executor
     def _handle(self, handler):
-        session = get_session()
-        try:
+        with session_manager() as session:
             response = handler(session)
-        except Exception as e:
-            raise
-        else:
             return response
-        finally:
-            session.close()
 
     @tornado.gen.coroutine
     def get(self):

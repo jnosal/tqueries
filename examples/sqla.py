@@ -57,7 +57,6 @@ class MainHandler(SqlalchemyRESTMixin):
 
     def handle_post(self, session):
         session.add(SuperModel(string_column=u'one'))
-        session.commit()
         logger.info(u'MainHandler: POST')
         return u"Created!"
 
